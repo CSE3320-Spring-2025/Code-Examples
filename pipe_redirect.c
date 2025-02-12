@@ -33,17 +33,19 @@ int main(void)
 
   pipe(pfds);
 
-  if (!fork()) {
+  int pid = fork();
+  
+  if (pid==0) {
     close(STDOUT_FILENO);         /* close normal stdout */
     dup(pfds[1]);                 /* make stdout same as pfds[1] */
-    close(pfds[0]);               /* we don't need this */
+    close(pfds[0]);               /* we don't need this anymore so close it */
     execlp("ls", "ls", NULL);
   } 
   else 
   {
     close(STDIN_FILENO);          /* close normal stdin */
     dup(pfds[0]);                 /* make stdin same as pfds[0] */
-    close(pfds[1]);               /* we don't need this */
+    close(pfds[1]);               /* we don't need this anymore so close it */
     execlp("wc", "wc", "-l", NULL);
   }
 
